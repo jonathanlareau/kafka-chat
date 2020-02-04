@@ -3,7 +3,6 @@ package chat
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"time"
 
@@ -20,16 +19,17 @@ type Consumer interface {
 	Read(ctx context.Context, chMsg chan Message, chErr chan error)
 }
 
+// NewConsumer create an instance of consumer
 func NewConsumer(brokers []string, topic string) Consumer {
 
 	c := kafka.ReaderConfig{
-		Brokers:         brokers,         // from:9092 
-		Topic:           topic,           // chat
-		MinBytes:        10e3,            // 10 KB
-		MaxBytes:        10e6,            // 10 MB
-		MaxWait:         1 * time.Second, // 1 Seconde
+		Brokers:         brokers,               // from:9092
+		Topic:           topic,                 // chat
+		MinBytes:        10e3,                  // 10 KB
+		MaxBytes:        10e6,                  // 10 MB
+		MaxWait:         10 * time.Millisecond, // 10 Millisecond
 		ReadLagInterval: -1,
-		GroupID:         Uuid(),
+		GroupID:         UUID(),
 		StartOffset:     kafka.LastOffset,
 	}
 
@@ -43,7 +43,7 @@ func (c *consumer) Read(ctx context.Context, chMsg chan Message, chErr chan erro
 
 		m, err := c.reader.ReadMessage(ctx)
 		if err != nil {
-			chErr <- errors.New(fmt.Sprintf("Error while reading a message: %v", err))
+			chErr <- fmt.Errorf("Error while reading a message: %v", err)
 			continue
 		}
 

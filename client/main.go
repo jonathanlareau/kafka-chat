@@ -10,7 +10,6 @@ import (
 	"strings"
 	"syscall"
 
-
 	"github.com/jonathanlareau/kafka-chat/chat"
 )
 
@@ -80,18 +79,4 @@ func printMessage(m chat.Message) {
 	default:
 		fmt.Printf("%s say: %s", m.Avatar, m.Msg)
 	}
-}
-
-// for mode server only
-func joinTheRoom(host string) error {
-	d := chat.Message{Avatar: myAvatar}
-	endpoint := fmt.Sprintf("%s/join", host)
-	return chat.Do(endpoint, d)
-}
-
-// for mode server only
-func publishMessage(host, msg string) error {
-	d := chat.Message{Avatar: myAvatar, Msg: msg}
-	endpoint := fmt.Sprintf("%s/publish", host)
-	return chat.Do(endpoint, d)
 }

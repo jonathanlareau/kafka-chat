@@ -19,6 +19,7 @@ type Publisher interface {
 	Publish(ctx context.Context, payload interface{}) error
 }
 
+// NewPublisher create an instance of publisher
 func NewPublisher(brokers []string, topic string) Publisher {
 	dialer := &kafka.Dialer{
 		Timeout:  10 * time.Second,
@@ -26,12 +27,12 @@ func NewPublisher(brokers []string, topic string) Publisher {
 	}
 
 	c := kafka.WriterConfig{
-		Brokers:          brokers,                      // from :9092
-		Topic:            topic,                        // chat
+		Brokers:          brokers, // from :9092
+		Topic:            topic,   // chat
 		Balancer:         &kafka.LeastBytes{},
 		Dialer:           dialer,
-		WriteTimeout:     10 * time.Second,             // 10 sec
-		ReadTimeout:      10 * time.Second,             // 10 sec
+		WriteTimeout:     10 * time.Second, // 10 sec
+		ReadTimeout:      10 * time.Second, // 10 sec
 		CompressionCodec: snappy.NewCompressionCodec(),
 	}
 
@@ -53,7 +54,7 @@ func (p *publisher) encodeMessage(payload interface{}) (kafka.Message, error) {
 		return kafka.Message{}, err
 	}
 
-	key := Uuid()
+	key := UUID()
 	return kafka.Message{
 		Key:   []byte(key),
 		Value: m,
